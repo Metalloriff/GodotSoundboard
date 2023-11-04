@@ -1,0 +1,15 @@
+asyncio==3.4.3
+certifi==2023.7.22
+cffi==1.16.0
+charset-normalizer==3.3.1
+click==8.1.7
+colorama==0.4.6
+gTTS==2.4.0
+idna==3.4
+numpy==1.26.1
+pycparser==2.21
+requests==2.31.0
+sounddevice==0.4.6
+soundfile==0.12.1
+urllib3==2.0.7
+websockets==12.0

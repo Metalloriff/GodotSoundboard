@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg width="512px" height="512px" viewBox="0 0 512 512" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <path d="M512 0L512 0L512 512L0 512L0 0L512 0Z" id="path_1" />
+    <clipPath id="clip_1">
+      <use xlink:href="#path_1" clip-rule="evenodd" fill-rule="evenodd" />
+    </clipPath>
+  </defs>
+  <g id="Icon 512" clip-path="url(#clip_1)">
+    <path d="M512 0L512 0L512 512L0 512L0 0L512 0Z" id="Icon-512" fill="#FFFFFF" fill-opacity="0" stroke="none" />
+    <path d="M28 256C28 130.079 130.079 28 256 28C381.921 28 484 130.079 484 256C484 381.921 381.921 484 256 484C130.079 484 28 381.921 28 256Z" id="Oval" fill="#FF4F64" fill-rule="evenodd" stroke="none" />
+    <path d="M110.5 207L110.5 304L158 304L222 371L222 142L158 207L110.5 207Z" id="Vector" fill="none" fill-rule="evenodd" stroke="#FFFFFF" stroke-width="25" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M381 205L381 300" id="Vector-2-Copy" fill="none" fill-rule="evenodd" stroke="#FFFFFF" stroke-width="25" stroke-linecap="round" />
+    <path d="M271 205L271 300" id="Vector-2" fill="none" fill-rule="evenodd" stroke="#FFFFFF" stroke-width="25" stroke-linecap="round" />
+    <path d="M323 156L323 354" id="Vector-3" fill="none" fill-rule="evenodd" stroke="#FFFFFF" stroke-width="25" stroke-linecap="round" />
+  </g>
+</svg>
