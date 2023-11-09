@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <path d="M24 0L24 0L24 24L0 24L0 0L24 0Z" id="path_1" />
+    <clipPath id="clip_1">
+      <use xlink:href="#path_1" clip-rule="evenodd" fill-rule="evenodd" />
+    </clipPath>
+  </defs>
+  <g id="heart" clip-path="url(#clip_1)">
+    <path d="M24 0L24 0L24 24L0 24L0 0L24 0Z" id="heart" fill="none" stroke="none" />
+    <path d="M20.84 4.61C19.8085 3.57799 18.4091 2.99817 16.95 2.99817C15.4909 2.99817 14.0915 3.57799 13.06 4.61L12 5.67L10.94 4.61C9.55008 3.22008 7.52416 2.67736 5.62555 3.18633C3.72694 3.69529 2.24414 5.1786 1.73583 7.07739C1.22752 8.97617 1.77094 11.0019 3.16135 12.3913L4.22134 13.4513L12 21.23L19.78 13.45L20.84 12.39C21.872 11.3585 22.4518 9.95914 22.4518 8.5C22.4518 7.04086 21.872 5.64152 20.84 4.61L20.84 4.61Z" id="Shape" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  </g>
+</svg>

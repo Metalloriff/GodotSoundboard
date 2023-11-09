@@ -68,17 +68,7 @@ func _render_clips():
 		item.get_node("ClipButton").text = clip_name
 		
 		item.get_node("ClipButton").pressed.connect(func():
-			while not FS.get_pref("audio_editor_path", ""):
-				$FileDialog.popup_centered()
-				FS.set_pref("audio_editor_path", await $FileDialog.file_selected)
-				$FileDialog.hide()
-			
-			var lof = FileAccess.open("user://audacity.lof", FileAccess.WRITE)
-			lof.store_line("window")
-			for clip in clips[clip_name]:
-				lof.store_line('file "%s"' % clip)
-			
-			OS.create_process(FS.get_pref("audio_editor_path"), [OS.get_user_data_dir().path_join("audacity.lof")])
+			$/root/main.open_files_in_audacity(clips[clip_name])
 		)
 		
 		item.get_node("DeleteButton").pressed.connect(func():

@@ -11,6 +11,7 @@ var SORT_METHOD := {
 @onready var controls_container := $VBoxContainer/Controls
 @onready var controls := controls_container.get_node("MarginContainer/HBoxContainer")
 
+var favorites: Dictionary
 var playing_node: Node
 
 func _ready():
@@ -96,21 +97,90 @@ func search_soundboard(container, search_text: String):
 		child.get_node("Button/Contents/Count").text = "%s items  " % str(len(visible_items))
 		child.visible = len(visible_items) > 0
 
-func add_soundboard_item(container: Node, fp: String):
+func add_soundboard_item(container: Node, _fp: String):
 	var item := soundboard_item.duplicate()
 	container.add_child(item)
+	
+	item.name = _fp.validate_node_name()
+	item.set_meta("fp", _fp)
 
-	var play = func():
+	item.pressed.connect(func():
 		playing_node = item
 		
 		if Soundboard.is_playing:
 			_on_play_pressed()
 		else:
 			controls.get_node("Seek").set_value_no_signal(0)
-			Soundboard.play(fp)
-
-	item.pressed.connect(play)
-	item.get_node("Contents/Name").text = fp.split("/")[-1].split(".")[0]
+			Soundboard.play(item.get_meta("fp"))
+	)
+	
+	item.get_node("Contents/Name").text = _fp.get_file().get_basename()
+	
+	var base_dir := _fp.get_base_dir()
+	var pref_path := "favorites.%s" % base_dir.get_file()
+	if not base_dir in favorites:
+		favorites[base_dir] = FS.get_pref(pref_path, [])
+	
+	var favorite_button := item.get_node("Contents/Right/FavoriteButton")
+	favorite_button.pressed.connect(func():
+		var fp = item.get_meta("fp")
+		var is_favorited = fp in favorites[base_dir]
+		is_favorited = not is_favorited
+		
+		favorite_button.modulate =\
+			Color("#ff4f64") if is_favorited\
+			else Color.WHITE
+		favorite_button.icon = favorite_button.get_meta("icon_filled" if is_favorited else "icon")
+		
+		if is_favorited and not fp in favorites[base_dir]:
+			favorites[base_dir].append(fp)
+		if not is_favorited and fp in favorites[base_dir]:
+			favorites[base_dir].erase(fp)
+		FS.set_pref(pref_path, favorites[base_dir])
+	)
+	
+	var is_favorited = _fp in favorites[base_dir]
+	favorite_button.modulate =\
+		Color("#ff4f64") if is_favorited\
+		else Color.WHITE
+	favorite_button.icon = favorite_button.get_meta("icon_filled" if is_favorited else "icon")
+	
+	item.get_node("Contents/Right/MoreOptions").get_popup().id_pressed.connect(func(id):
+		match id:
+			0:
+				var rename_dialog := $RenameDialog
+				var field := $RenameDialog/Field
+				var fp = item.get_meta("fp")
+				
+				field.text = fp.get_file().get_basename()
+				rename_dialog.popup()
+				
+				rename_dialog.canceled.connect(func():
+					field.text = ""
+					rename_dialog.confirmed.emit()
+				)
+				
+				await rename_dialog.confirmed
+				
+				if not len(field.text.validate_filename()): return
+				
+				var new_fp = fp.get_base_dir().path_join(field.text.validate_filename()) + "." + fp.get_extension()
+				DirAccess.rename_absolute(fp, new_fp)
+				
+				if fp in favorites[base_dir]:
+					var idx = favorites[base_dir].find(fp)
+					
+					favorites[base_dir][idx] = new_fp
+					FS.set_pref(pref_path, favorites[base_dir])
+				
+				item.name = new_fp.validate_node_name()
+				item.set_meta("fp", new_fp)
+				item.get_node("Contents/Name").text = new_fp.get_file().get_basename()
+				
+				rename_dialog.canceled.emit()
+			1:
+				open_files_in_audacity([item.get_meta("fp")])
+	)
 
 func _init_settings():
 	PythonServer.send_message({
@@ -157,6 +227,12 @@ func _on_seek_value_changed(value):
 func _on_play_pressed():
 	PythonServer.send_message({
 		type = "PAUSE_PLAY"
+	})
+
+func _on_stop_pressed():
+	PythonServer.send_message({
+		type = "SEEK",
+		seek = controls.get_node("Seek").max_value
 	})
 
 func _on_local_volume_value_changed(value):
@@ -227,3 +303,16 @@ func _on_export_tts_pressed():
 		voice = %TTSVoiceSelection.get_item_text(%TTSVoiceSelection.selected),
 		export = file_path
 	})
+
+func open_files_in_audacity(files: Array):
+	while not FS.get_pref("audio_editor_path", ""):
+		$FileDialog.popup_centered()
+		FS.set_pref("audio_editor_path", await $FileDialog.file_selected)
+		$FileDialog.hide()
+	
+	var lof = FileAccess.open("user://audacity.lof", FileAccess.WRITE)
+	lof.store_line("window")
+	for file in files:
+		lof.store_line('file "%s"' % file)
+	
+	OS.create_process(FS.get_pref("audio_editor_path"), [OS.get_user_data_dir().path_join("audacity.lof")])

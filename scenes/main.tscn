@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://bqxf5bw44lssj"]
+[gd_scene load_steps=22 format=3 uid="uid://bqxf5bw44lssj"]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_kpuub"]
 [ext_resource type="Theme" uid="uid://dct7hs523oj4b" path="res://theme.tres" id="1_m78sb"]
@@ -8,7 +8,51 @@
 [ext_resource type="Texture2D" uid="uid://d1t5rvvfiib02" path="res://icons/trash.svg" id="4_n2gre"]
 [ext_resource type="Script" path="res://scripts/clipper.gd" id="4_uyv3h"]
 [ext_resource type="Texture2D" uid="uid://b5873cg3bwnwf" path="res://icons/folder.svg" id="6_cyrgy"]
+[ext_resource type="Texture2D" uid="uid://htmyiqnygd6j" path="res://icons/more-horizontal.svg" id="8_gisj1"]
 [ext_resource type="Script" path="res://scripts/notification_toast.gd" id="8_qqcrc"]
+[ext_resource type="Texture2D" uid="uid://mx7hip8lxrd8" path="res://icons/edit-3.svg" id="9_0tbu4"]
+[ext_resource type="Texture2D" uid="uid://iay4op5vm52x" path="res://icons/x.svg" id="9_2gh8e"]
+[ext_resource type="Texture2D" uid="uid://dh1ansqn8yqis" path="res://icons/external-link.svg" id="10_338of"]
+[ext_resource type="Texture2D" uid="uid://dv14r4fk6xqin" path="res://icons/heart.svg" id="11_x10sn"]
+[ext_resource type="Texture2D" uid="uid://b4td25gmkxt63" path="res://icons/heart-filled.svg" id="12_rygrl"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_634m5"]
+content_margin_left = 5.0
+content_margin_top = 5.0
+content_margin_right = 5.0
+content_margin_bottom = 5.0
+bg_color = Color(0.117647, 0.117647, 0.117647, 0)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rynph"]
+content_margin_left = 5.0
+content_margin_top = 5.0
+content_margin_right = 5.0
+content_margin_bottom = 5.0
+bg_color = Color(0.117647, 0.117647, 0.117647, 0)
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_l5m60"]
+content_margin_left = 5.0
+content_margin_top = 5.0
+content_margin_right = 5.0
+content_margin_bottom = 5.0
+bg_color = Color(0.15, 0.15, 0.15, 1)
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_njvd7"]
+content_margin_left = 5.0
+content_margin_top = 5.0
+content_margin_right = 5.0
+content_margin_bottom = 5.0
+bg_color = Color(0.117647, 0.117647, 0.117647, 0)
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_re6do"]
 bg_color = Color(0.14, 0.14, 0.14, 1)
@@ -123,7 +167,6 @@ layout_mode = 2
 size_flags_vertical = 3
 
 [node name="Clipper" type="ScrollContainer" parent="VBoxContainer/TabContainer"]
-visible = false
 layout_mode = 2
 script = ExtResource("4_uyv3h")
 
@@ -258,6 +301,7 @@ text = "Save TTS to File"
 
 [node name="SoundboardTabItem" type="ScrollContainer" parent="VBoxContainer/TabContainer"]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/TabContainer/SoundboardTabItem"]
@@ -363,6 +407,38 @@ layout_mode = 2
 text = "Soundboard Item"
 vertical_alignment = 1
 
+[node name="Right" type="HBoxContainer" parent="VBoxContainer/TabContainer/SoundboardTabItem/MarginContainer/VBoxContainer/Items/SoundboardItem/Contents"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 0
+alignment = 2
+
+[node name="MoreOptions" type="MenuButton" parent="VBoxContainer/TabContainer/SoundboardTabItem/MarginContainer/VBoxContainer/Items/SoundboardItem/Contents/Right"]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_634m5")
+icon = ExtResource("8_gisj1")
+flat = false
+item_count = 2
+popup/item_0/text = "Rename"
+popup/item_0/icon = ExtResource("9_0tbu4")
+popup/item_0/id = 0
+popup/item_1/text = "Open in Audacity"
+popup/item_1/icon = ExtResource("10_338of")
+popup/item_1/id = 1
+
+[node name="FavoriteButton" type="Button" parent="VBoxContainer/TabContainer/SoundboardTabItem/MarginContainer/VBoxContainer/Items/SoundboardItem/Contents/Right"]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_rynph")
+theme_override_styles/hover = SubResource("StyleBoxFlat_l5m60")
+theme_override_styles/focus = SubResource("StyleBoxFlat_njvd7")
+icon = ExtResource("11_x10sn")
+metadata/icon = ExtResource("11_x10sn")
+metadata/icon_filled = ExtResource("12_rygrl")
+
+[node name="Control" type="Control" parent="VBoxContainer/TabContainer/SoundboardTabItem/MarginContainer/VBoxContainer/Items/SoundboardItem/Contents/Right"]
+custom_minimum_size = Vector2(5, 0)
+layout_mode = 2
+
 [node name="+" type="Control" parent="VBoxContainer/TabContainer"]
 visible = false
 layout_mode = 2
@@ -399,8 +475,14 @@ max_value = 100000.0
 step = 1024.0
 value = 2048.0
 
+[node name="Stop" type="Button" parent="VBoxContainer/Controls/MarginContainer/HBoxContainer"]
+layout_mode = 2
+icon = ExtResource("9_2gh8e")
+flat = true
+icon_alignment = 1
+
 [node name="FileDialog" type="FileDialog" parent="."]
-title = "Find Audacity"
+title = "Open a File"
 initial_position = 4
 size = Vector2i(455, 377)
 ok_button_text = "Open"
@@ -452,7 +534,7 @@ text = "This is a really long test or something idk."
 title = "Open a Directory"
 initial_position = 4
 size = Vector2i(434, 372)
-ok_button_text = "Select This Folder"
+ok_button_text = "Select Current Folder"
 file_mode = 2
 access = 2
 
@@ -461,6 +543,18 @@ initial_position = 4
 size = Vector2i(629, 357)
 access = 2
 filters = PackedStringArray("*.mp3")
+
+[node name="RenameDialog" type="ConfirmationDialog" parent="."]
+title = "Rename"
+initial_position = 4
+size = Vector2i(600, 100)
+
+[node name="Field" type="LineEdit" parent="RenameDialog"]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 592.0
+offset_bottom = 53.0
+placeholder_text = "Enter new file name..."
 
 [connection signal="value_changed" from="VBoxContainer/MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer/LocalVolume" to="." method="_on_local_volume_value_changed"]
 [connection signal="value_changed" from="VBoxContainer/MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/RemoteVolume" to="." method="_on_remote_volume_value_changed"]
@@ -475,4 +569,5 @@ filters = PackedStringArray("*.mp3")
 [connection signal="pressed" from="VBoxContainer/TabContainer/TTS/MarginContainer/VBoxContainer/ExportTTS" to="." method="_on_export_tts_pressed"]
 [connection signal="pressed" from="VBoxContainer/Controls/MarginContainer/HBoxContainer/Play" to="." method="_on_play_pressed"]
 [connection signal="value_changed" from="VBoxContainer/Controls/MarginContainer/HBoxContainer/Seek" to="." method="_on_seek_value_changed"]
+[connection signal="pressed" from="VBoxContainer/Controls/MarginContainer/HBoxContainer/Stop" to="." method="_on_stop_pressed"]
 [connection signal="timeout" from="NotificationToast/Timer" to="NotificationToast" method="_on_timer_timeout"]
