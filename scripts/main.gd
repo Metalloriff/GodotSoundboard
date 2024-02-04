@@ -13,6 +13,7 @@ var SORT_METHOD := {
 
 var favorites: Dictionary
 var playing_node: Node
+var search_tags: Array[String]
 
 func _ready():
 	%LocalVolume.value = FS.get_pref("settings.local_volume", 0.5)
@@ -70,8 +71,26 @@ func _update_directories():
 			for fp in dir_files:
 				add_soundboard_item(dir_items, fp)
 		
-		tab_item.get_node("MarginContainer/VBoxContainer/SearchField/LineEdit").text_changed.connect(func(search_text):
+		var search_field_container := tab_item.get_node("MarginContainer/VBoxContainer/SearchField")
+		search_field_container.get_node("LineEdit").text_changed.connect(func(search_text):
 			search_soundboard(tab_items, search_text)
+			search_field_container.get_node("ClearButton").visible = len(search_text) > 0
+		)
+		
+		search_field_container.get_node("ClearButton").pressed.connect(func():
+			search_field_container.get_node("LineEdit").text = ""
+			search_field_container.get_node("LineEdit").text_changed.emit("")
+		)
+		
+		var tags_container := tab_item.get_node("MarginContainer/VBoxContainer/Tags")
+		
+		tags_container.get_node("Favorites").pressed.connect(func():
+			if "favorites" in search_tags:
+				search_tags.erase("favorites")
+			else:
+				search_tags.append("favorites")
+			
+			search_soundboard(tab_items, search_field_container.get_node("LineEdit").text)
 		)
 		
 		for fp in files:
@@ -80,12 +99,20 @@ func _update_directories():
 	tabs.move_child(tabs.get_node("+"), -1)
 
 func search_soundboard(container, search_text: String):
+	var is_favorited := func(item: Node) -> bool:
+		var fp: String = item.get_meta("fp")
+		return fp in favorites[fp.get_base_dir()]
+	
+	var validate_tags := func(item: Node) -> bool:
+		return \
+			("favorites" not in search_tags or is_favorited.call(item))
+	
 	for child in container.get_children():
 		if child.has_node("ItemsContainer/Items"):
 			search_soundboard(child.get_node("ItemsContainer/Items"), search_text)
 			continue
 		
-		if not search_text.strip_edges():
+		if not search_text.strip_edges() and validate_tags.call(child):
 			child.show()
 		else:
 			child.visible = search_text.to_lower() in child.get_node("Contents/Name").text.to_lower()
@@ -95,7 +122,7 @@ func search_soundboard(container, search_text: String):
 		var visible_items = child.get_node("ItemsContainer/Items").get_children().filter(func(c): return c.visible)
 		
 		child.get_node("Button/Contents/Count").text = "%s items  " % str(len(visible_items))
-		child.visible = len(visible_items) > 0
+		child.visible = len(visible_items) > 0 and validate_tags.call(child)
 
 func add_soundboard_item(container: Node, _fp: String):
 	var item := soundboard_item.duplicate()
@@ -267,6 +294,9 @@ func _on_play_tts_pressed():
 		text = %TTSField.text,
 		voice = %TTSVoiceSelection.get_item_text(%TTSVoiceSelection.selected)
 	})
+
+func _on_tts_field_text_submitted(new_text):
+	_on_play_tts_pressed()
 
 func _on_toggle_volume_link_toggled(button_pressed):
 	if button_pressed:

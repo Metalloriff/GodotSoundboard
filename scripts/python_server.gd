@@ -8,7 +8,7 @@ const MESSAGE_TYPE := {
 
 signal message_received(message)
 
-func get_global_path(path: String):
+func get_global_path(path: String) -> String:
 	if OS.has_feature("editor"):
 		return ProjectSettings.globalize_path("res://%s" % path)
 	return OS.get_executable_path().get_base_dir().path_join(path)
@@ -17,16 +17,43 @@ var pid := -1
 var socket := WebSocketPeer.new()
 var has_sent_settings := false
 
+@onready var PYTHON_SERVER_PATH := get_global_path("dist/python_server")
+var python_cmd: String
+
+func _search_for_python() -> bool:
+	for exec in ["py", "python3", "python"]:
+		if OS.execute(exec, ["--version"]) == 0:
+			python_cmd = exec
+			return true
+	return false
+
 func _ready():
-	if OS.has_feature("editor"):
-		var python_server_path = get_global_path("python_server")
-		pid = OS.create_process(python_server_path.path_join("venv/Scripts/python.exe"), [python_server_path])
+	set_process(false)
+	
+	if not _search_for_python():
+		%NotificationToast.show_message("Python is not installed! Please install Python and restart!", NotificationToast.TOAST_TYPE.ERROR)
+		return
+	
+	if OS.get_name() in ["Linux", "X11"]:
+		OS.execute("bash", [PYTHON_SERVER_PATH.path_join("install.sh")])
+		pid = OS.create_process("bash", [PYTHON_SERVER_PATH.path_join("run.sh")], true)
+		print(PYTHON_SERVER_PATH.path_join("run.sh"))
+		prints("bruh", pid)
+		
+		await get_tree().create_timer(2.0).timeout
 	else:
-		pid = OS.create_process(OS.get_executable_path().get_base_dir().path_join("python_server.exe"), [])
+		var o: Array[String]
+		print(python_cmd)
+		prints("windows test", OS.execute(python_cmd, ["-m pip install -r %s" % get_global_path("dist/python_server/requirements.txt")], o))
+		print(o)
+		pid = OS.create_process(python_cmd, [PYTHON_SERVER_PATH])
+	
+	set_process(true)
 	socket.connect_to_url("ws://%s:%s" % [HOST, PORT])
 
 func _exit_tree():
-	OS.kill(pid)
+	if pid > 1:
+		OS.kill(pid)
 
 func _process(_delta):
 	socket.poll()

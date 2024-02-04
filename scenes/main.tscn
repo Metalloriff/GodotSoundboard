@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://bqxf5bw44lssj"]
+[gd_scene load_steps=25 format=3 uid="uid://bqxf5bw44lssj"]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_kpuub"]
 [ext_resource type="Theme" uid="uid://dct7hs523oj4b" path="res://theme.tres" id="1_m78sb"]
@@ -8,6 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://d1t5rvvfiib02" path="res://icons/trash.svg" id="4_n2gre"]
 [ext_resource type="Script" path="res://scripts/clipper.gd" id="4_uyv3h"]
 [ext_resource type="Texture2D" uid="uid://b5873cg3bwnwf" path="res://icons/folder.svg" id="6_cyrgy"]
+[ext_resource type="Texture2D" uid="uid://c7c1ne53hett6" path="res://icons/bookmark.svg" id="7_xcpku"]
 [ext_resource type="Texture2D" uid="uid://htmyiqnygd6j" path="res://icons/more-horizontal.svg" id="8_gisj1"]
 [ext_resource type="Script" path="res://scripts/notification_toast.gd" id="8_qqcrc"]
 [ext_resource type="Texture2D" uid="uid://mx7hip8lxrd8" path="res://icons/edit-3.svg" id="9_0tbu4"]
@@ -15,6 +16,28 @@
 [ext_resource type="Texture2D" uid="uid://dh1ansqn8yqis" path="res://icons/external-link.svg" id="10_338of"]
 [ext_resource type="Texture2D" uid="uid://dv14r4fk6xqin" path="res://icons/heart.svg" id="11_x10sn"]
 [ext_resource type="Texture2D" uid="uid://b4td25gmkxt63" path="res://icons/heart-filled.svg" id="12_rygrl"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_encpr"]
+content_margin_left = 5.0
+content_margin_top = 5.0
+content_margin_right = 5.0
+content_margin_bottom = 5.0
+bg_color = Color(0.713726, 0.713726, 0.713726, 0.156863)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lgycb"]
+content_margin_left = 5.0
+content_margin_top = 5.0
+content_margin_right = 5.0
+content_margin_bottom = 5.0
+bg_color = Color(0.713726, 0.713726, 0.713726, 0.254902)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_634m5"]
 content_margin_left = 5.0
@@ -165,8 +188,10 @@ flat = true
 [node name="TabContainer" type="TabContainer" parent="VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+current_tab = 2
 
 [node name="Clipper" type="ScrollContainer" parent="VBoxContainer/TabContainer"]
+visible = false
 layout_mode = 2
 script = ExtResource("4_uyv3h")
 
@@ -301,7 +326,6 @@ text = "Save TTS to File"
 
 [node name="SoundboardTabItem" type="ScrollContainer" parent="VBoxContainer/TabContainer"]
 unique_name_in_owner = true
-visible = false
 layout_mode = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/TabContainer/SoundboardTabItem"]
@@ -330,6 +354,25 @@ vertical_alignment = 1
 [node name="LineEdit" type="LineEdit" parent="VBoxContainer/TabContainer/SoundboardTabItem/MarginContainer/VBoxContainer/SearchField"]
 layout_mode = 2
 size_flags_horizontal = 3
+
+[node name="ClearButton" type="Button" parent="VBoxContainer/TabContainer/SoundboardTabItem/MarginContainer/VBoxContainer/SearchField"]
+visible = false
+custom_minimum_size = Vector2(27, 0)
+layout_mode = 2
+icon = ExtResource("9_2gh8e")
+expand_icon = true
+
+[node name="Tags" type="HBoxContainer" parent="VBoxContainer/TabContainer/SoundboardTabItem/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Favorites" type="Button" parent="VBoxContainer/TabContainer/SoundboardTabItem/MarginContainer/VBoxContainer/Tags"]
+modulate = Color(1, 0.309804, 0.392157, 1)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_encpr")
+theme_override_styles/hover = SubResource("StyleBoxFlat_lgycb")
+text = "favorites"
+icon = ExtResource("7_xcpku")
 
 [node name="Items" type="VBoxContainer" parent="VBoxContainer/TabContainer/SoundboardTabItem/MarginContainer/VBoxContainer"]
 layout_mode = 2
@@ -491,6 +534,7 @@ access = 2
 filters = PackedStringArray("*.exe")
 
 [node name="NotificationToast" type="MarginContainer" parent="."]
+unique_name_in_owner = true
 modulate = Color(1, 0.333333, 0.333333, 1)
 layout_mode = 1
 anchors_preset = 12
@@ -565,6 +609,7 @@ placeholder_text = "Enter new file name..."
 [connection signal="pressed" from="VBoxContainer/TabContainer/Clipper/MarginContainer/VBoxContainer/HBoxContainer2/ClipperStopButton" to="VBoxContainer/TabContainer/Clipper" method="_on_clipper_stop_button_pressed"]
 [connection signal="pressed" from="VBoxContainer/TabContainer/Clipper/MarginContainer/VBoxContainer/ClipperExportButton" to="VBoxContainer/TabContainer/Clipper" method="_on_clipper_export_button_pressed"]
 [connection signal="item_selected" from="VBoxContainer/TabContainer/TTS/MarginContainer/VBoxContainer/TTSVoiceSelection" to="." method="_on_tts_voice_selection_item_selected"]
+[connection signal="text_submitted" from="VBoxContainer/TabContainer/TTS/MarginContainer/VBoxContainer/HBoxContainer/TTSField" to="." method="_on_tts_field_text_submitted"]
 [connection signal="pressed" from="VBoxContainer/TabContainer/TTS/MarginContainer/VBoxContainer/PlayTTS" to="." method="_on_play_tts_pressed"]
 [connection signal="pressed" from="VBoxContainer/TabContainer/TTS/MarginContainer/VBoxContainer/ExportTTS" to="." method="_on_export_tts_pressed"]
 [connection signal="pressed" from="VBoxContainer/Controls/MarginContainer/HBoxContainer/Play" to="." method="_on_play_pressed"]

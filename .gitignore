@@ -1,5 +1,9 @@
 # Godot 4+ specific ignores
 .godot/
 __pycache__/
-dist/
+venv/
+dist/Linux Dist
+dist/Windows Dist
+*.x86_64
 *.exe
+tts.mp3
