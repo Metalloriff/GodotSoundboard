@@ -17,7 +17,7 @@ var pid := -1
 var socket := WebSocketPeer.new()
 var has_sent_settings := false
 
-@onready var PYTHON_SERVER_PATH := get_global_path("dist/python_server")
+@onready var PYTHON_SERVER_PATH := get_global_path("python_server")
 var python_cmd: String
 
 func _search_for_python() -> bool:
@@ -36,17 +36,12 @@ func _ready():
 	
 	if OS.get_name() in ["Linux", "X11"]:
 		OS.execute("bash", [PYTHON_SERVER_PATH.path_join("install.sh")])
-		pid = OS.create_process("bash", [PYTHON_SERVER_PATH.path_join("run.sh")], true)
-		print(PYTHON_SERVER_PATH.path_join("run.sh"))
-		prints("bruh", pid)
+		pid = OS.create_process("bash", [PYTHON_SERVER_PATH.path_join("run.sh")])
 		
 		await get_tree().create_timer(2.0).timeout
 	else:
-		var o: Array[String]
-		print(python_cmd)
-		prints("windows test", OS.execute(python_cmd, ["-m pip install -r %s" % get_global_path("dist/python_server/requirements.txt")], o))
-		print(o)
-		pid = OS.create_process(python_cmd, [PYTHON_SERVER_PATH])
+		OS.execute(PYTHON_SERVER_PATH.path_join("install.bat"), [])
+		pid = OS.create_process(PYTHON_SERVER_PATH.path_join("run.bat"), [])
 	
 	set_process(true)
 	socket.connect_to_url("ws://%s:%s" % [HOST, PORT])
